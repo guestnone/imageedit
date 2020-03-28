@@ -1,0 +1,1 @@
+Należy zainstalować pyqt5, opencv-python, qimage2nparray i matplotlib przez pip'a i w wierszu poleceń: python image_edit.py
