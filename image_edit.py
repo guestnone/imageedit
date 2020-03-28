@@ -54,6 +54,8 @@ class UserGui(QMainWindow, Ui_MainWindow):
         self.thresholdBinarizepushButton.clicked.connect(self.thresholdBinarize)
         self.niblackBinarizepushButton.clicked.connect(self.niblackBinarize)
         self.convolutePushButton.clicked.connect(self.convolute)
+        self.kuwaharaPushButton.clicked.connect(self.kuwahara)
+        self.medianFilterPushButton.clicked.connect(self.median)
         
         self.scene.mouseMoveEvent = self.graphicsSceneMouseMoveEvent
         self.scene.mousePressEvent = self.graphicsSceneMousePressEvent
@@ -179,6 +181,30 @@ class UserGui(QMainWindow, Ui_MainWindow):
     def convolute(self):
         if self.isLoaded:
             dialog = ConvoluteFiltering(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+                
+    @pyqtSlot()
+    def kuwahara(self):
+        if self.isLoaded:
+            dialog = KuwaharaFiltering(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+                
+    @pyqtSlot()
+    def median(self):
+        if self.isLoaded:
+            dialog = MedianFiltering(self.image)
             if dialog.isChanged():
                 self.image = dialog.getAfterQImage()
                 self.pixmap = QPixmap.fromImage(self.image)

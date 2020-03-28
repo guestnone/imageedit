@@ -258,6 +258,32 @@
      <string>Convolution Filter</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="kuwaharaPushButton">
+    <property name="geometry">
+     <rect>
+      <x>665</x>
+      <y>250</y>
+      <width>121</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kuwahara Filter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="medianFilterPushButton">
+    <property name="geometry">
+     <rect>
+      <x>663</x>
+      <y>280</y>
+      <width>121</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Median Filter</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
