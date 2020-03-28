@@ -16,6 +16,7 @@ from HistogramUtility import *
 from Binarization import *
 from BrightenDarken import *
 from ColorSelectDialogImpl import *
+from Filtering import *
 
 from MainWindow import Ui_MainWindow
     
@@ -52,6 +53,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
         self.otsuBinarizePushButton.clicked.connect(self.otsuBinarize)
         self.thresholdBinarizepushButton.clicked.connect(self.thresholdBinarize)
         self.niblackBinarizepushButton.clicked.connect(self.niblackBinarize)
+        self.convolutePushButton.clicked.connect(self.convolute)
         
         self.scene.mouseMoveEvent = self.graphicsSceneMouseMoveEvent
         self.scene.mousePressEvent = self.graphicsSceneMousePressEvent
@@ -165,6 +167,18 @@ class UserGui(QMainWindow, Ui_MainWindow):
     def niblackBinarize(self):
         if self.isLoaded:
             dialog = NiblackBinarization(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+    
+    @pyqtSlot()
+    def convolute(self):
+        if self.isLoaded:
+            dialog = ConvoluteFiltering(self.image)
             if dialog.isChanged():
                 self.image = dialog.getAfterQImage()
                 self.pixmap = QPixmap.fromImage(self.image)

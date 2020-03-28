@@ -245,6 +245,19 @@
      <string>Threshold Binarization</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="convolutePushButton">
+    <property name="geometry">
+     <rect>
+      <x>667</x>
+      <y>220</y>
+      <width>120</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Convolution Filter</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
