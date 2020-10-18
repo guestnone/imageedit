@@ -4,6 +4,7 @@ from Binarization import *
 from BrightenDarken import *
 from ColorSelectDialogImpl import *
 from Filtering import *
+from JpegCompressionQualityDialogImpl import JpegCompressionQualityDialog
 
 from MainWindow import Ui_MainWindow
 
@@ -105,8 +106,14 @@ class UserGui(QMainWindow, Ui_MainWindow):
                         msg.setDetailedText("Reason: " + ret)
                         msg.setWindowTitle("Error!")
                         msg.exec_()
+                elif selFilter == "JPEG file (*.jpg)":
+                    dialog = JpegCompressionQualityDialog()
+                    dialog.setModal(True)
+                    dialog.exec_()
+                    if dialog.getSave():
+                        self.image.save(name, "jpeg", dialog.getValue())
                 else:
-                    self.image.save(name[0])
+                    self.image.save(name)
     
     @pyqtSlot()
     def showDefaultHistogram(self):
