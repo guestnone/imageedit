@@ -1,24 +1,13 @@
 import sys, random
-from enum import Enum
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QBasicTimer, pyqtSignal, pyqtSlot, QAbstractTableModel, QModelIndex, QVariant
-from PyQt5.QtGui import *
-
-from matplotlib.backends.backend_qt5agg import FigureCanvas
-from matplotlib.figure import Figure
-
-import cv2
-import numpy as np
-import qimage2ndarray
-
-from HistogramUtility import *
 from Binarization import *
 from BrightenDarken import *
 from ColorSelectDialogImpl import *
 from Filtering import *
 
 from MainWindow import Ui_MainWindow
+
+import NetPbm
     
 
 class UserGui(QMainWindow, Ui_MainWindow):
@@ -93,10 +82,31 @@ class UserGui(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def saveFile(self):
         if self.isLoaded:
-            name = QFileDialog.getSaveFileName(self, "Save File", "", "PNG file (*.png);;JPEG file (*.jpg);;BMP file (*.bmp);;GIF file (*.gif);;TIFF file (*.tif)")
+            name, selFilter = QFileDialog.getSaveFileName(self, "Save File", "", "PNG file (*.png);;JPEG file (*.jpg);;BMP file (*.bmp);;GIF file (*.gif);;TIFF file (*.tif);;PPM Binary File (*.ppm);;PPM ASCII File (*.ppm)")
         
             if name:
-                self.image.save(name[0])
+                if selFilter == "PPM Binary File (*.ppm)":
+                    writer = NetPbm.NetPbmWriter()
+                    ret = writer.save(self.image, name, NetPbm.NetPbmFileType.PortablePixMapBinary)
+                    if ret != NetPbm.NetPbmWriterResult.OK:
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText("Couldn't save PPM file!")
+                        msg.setDetailedText("Reason: " + ret)
+                        msg.setWindowTitle("Error!")
+                        msg.exec_()
+                elif selFilter == "PPM ASCII File (*.ppm)":
+                    writer = NetPbm.NetPbmWriter()
+                    ret = writer.save(self.image, name, NetPbm.NetPbmFileType.PortablePixMapAscii)
+                    if ret != NetPbm.NetPbmWriterResult.OK:
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText("Couldn't save PPM file!")
+                        msg.setDetailedText("Reason: " + ret)
+                        msg.setWindowTitle("Error!")
+                        msg.exec_()
+                else:
+                    self.image.save(name[0])
     
     @pyqtSlot()
     def showDefaultHistogram(self):
