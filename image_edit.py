@@ -68,17 +68,37 @@ class UserGui(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def openFile(self):
         options = QFileDialog.Options()
-        name = QFileDialog.getOpenFileName(self, 'Open File', "", "Image file (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff);;All Files (*)", options = options)
+        name, selFilter = QFileDialog.getOpenFileName(self, 'Open File', "", "Image file (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff);;PPM File (*.ppm);;All Files (*)", options = options)
         
         if name:
-            self.fileName = name
-            self.scene.clear()
-            self.image = QImage(name[0])
-            self.pixmap = QPixmap.fromImage(self.image)
-            self.imageWidth, self.imageHeight = self.pixmap.width(), self.pixmap.height()
-            self.internalPixmap = self.scene.addPixmap(self.pixmap)
-            self.scene.setSceneRect(0, 0, self.imageWidth, self.imageHeight)
-            self.isLoaded = True
+            if selFilter == "PPM File (*.ppm)":
+                reader = NetPbm.NetPbmReader()
+                ret = reader.fromFile(name)
+                if ret != NetPbm.NetPbmReaderResult.OK:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("Couldn't load PPM file!")
+                    msg.setDetailedText("Reason: " + str(ret))
+                    msg.setWindowTitle("Error!")
+                    msg.exec_()
+                    return
+                self.image = reader.getDecoded()
+                self.fileName = name
+                self.scene.clear()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.imageWidth, self.imageHeight = self.pixmap.width(), self.pixmap.height()
+                self.internalPixmap = self.scene.addPixmap(self.pixmap)
+                self.scene.setSceneRect(0, 0, self.imageWidth, self.imageHeight)
+                self.isLoaded = True
+            else:
+                self.fileName = name
+                self.scene.clear()
+                self.image = QImage(name)
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.imageWidth, self.imageHeight = self.pixmap.width(), self.pixmap.height()
+                self.internalPixmap = self.scene.addPixmap(self.pixmap)
+                self.scene.setSceneRect(0, 0, self.imageWidth, self.imageHeight)
+                self.isLoaded = True
     
     @pyqtSlot()
     def saveFile(self):

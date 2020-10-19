@@ -5,12 +5,15 @@ import qimage2ndarray
 from PyQt5.QtGui import QImage
 import numpy as np
 import os.path
+import chardet
 
 
 class NetPbmReaderResult(Enum):
     OK = 0
     UnsupportedFormatVersion = 1
     CorruptedFile = 2
+    FileDoesNotExists = 3
+    UnknownError = 4
 
 
 class NetPbmWriterResult(Enum):
@@ -28,27 +31,117 @@ class NetPbmFileType(Enum):
     PortablePixMapBinary = 6
 
 
-# def netPbmMagicTagToFileTypeEnum(input: str):
-
 def netPbmFileTypeEnumToMagic(input: NetPbmFileType):
     return "P" + str(input.value)
 
 
 class NetPbmReader:
-    def fromFile(self, fileName: str):
-        return 0
+    image = None
 
-    def read(self, stream):
+    def fromFile(self, fileName: str):
+        if not os.path.exists(fileName):
+            return NetPbmReaderResult.FileDoesNotExists
+
+        ## TODO: Might break if encoding is different but since non-ascii characters are forbidden it shouldn't be problem
+        fileInitRead = open(fileName, "r", encoding="Latin-1")
+        magic = fileInitRead.read(2)
+        fileInitRead.close()
+        if magic == netPbmFileTypeEnumToMagic(NetPbmFileType.PortablePixMapAscii):
+            return self.readAsciiStream(fileName)
+        elif magic == netPbmFileTypeEnumToMagic(NetPbmFileType.PortablePixMapBinary):
+            return self.readBinaryStream(fileName)
+        else:
+            return NetPbmReaderResult.UnsupportedFormatVersion
+
+    def readBinaryStream(self, fileName: str):
+        file = open(fileName, "r", encoding="Latin-1")
+        data = file.readlines()
+        tokens = self.__tokenize(data)
+        normailize = False
+        _ = next(tokens)
+        width, height = (int(next(tokens)) for i in range(2))
+        maxColorValueText = next(tokens)
+        maxColorValue = int(maxColorValueText)
+        _ = next(tokens)
+
+        if maxColorValue != 255:
+            normailize = True
+        arr = np.zeros((height, width, 3))
+        file.close()
+
+        fileBin = open(fileName, "rb")
+        # read header that we don't need
+        _ = fileBin.read(self.currPos)
+
+        try:
+            readArr = np.frombuffer(fileBin.read(), dtype='uint8')
+        except ValueError as e:
+            return NetPbmReaderResult.CorruptedFile  # TODO: IDK what are the exception types for numpy so we return that its corrupted
+        except Exception as e:
+            print(e)
+            return NetPbmReaderResult.UnknownError
+
+        if len(readArr) != width*height*3:
+            return NetPbmReaderResult.CorruptedFile
+
+        arr = readArr.reshape(height, width, 3)
+        copy = arr.copy()
+        for h in range(height):
+            for w in range(0, width):
+                r, g, b = arr[h][w]
+                if normailize:
+                    copy[h][w] = np.array([self.normalize(r, maxColorValue), self.normalize(g, maxColorValue),
+                                          self.normalize(b, maxColorValue)])
+
+        self.image = qimage2ndarray.array2qimage(copy, False)
+
         return NetPbmReaderResult.OK
 
-    def readBinaryStream(self):
-        return 0
+    def readAsciiStream(self, fileName: str):
+        file = open(fileName, "r", encoding="Latin-1")
+        data = file.readlines()
+        tokens = self.__tokenize(data)
+        normailize = False
+        _ = next(tokens)
+        width, height, maxColorValue = (int(next(tokens)) for i in range(3))
 
-    def readAsciiStream(self):
-        return 0
+        if maxColorValue != 255:
+            normailize = True
 
-    def __tokenize(self):
-        return 0
+        arr = np.zeros((height, width, 3))
+
+        try:
+            for h in range(height):
+                for w in range(0, width):
+                    r, g, b = (int(next(tokens)) for i in range(3))
+                    if normailize:
+                        r = self.normalize(r, maxColorValue)
+                        g = self.normalize(g, maxColorValue)
+                        b = self.normalize(b, maxColorValue)
+                    arr[h][w] = np.array([r, g, b])
+        except RuntimeError as e:
+            if e.__cause__ == "StopIteration": # We can't get next set, file corrupted.
+                return NetPbmReaderResult.CorruptedFile
+            else:
+                return NetPbmReaderResult.UnknownError
+
+        self.image = qimage2ndarray.array2qimage(arr)
+
+        return NetPbmReaderResult.OK
+
+    def normalize(self, val: int, max: int) -> int:
+        return int((val * 255) / max)
+
+    def getDecoded(self) -> QImage:
+        return self.image
+
+    def __tokenize(self, data):
+        self.currPos = 0
+        for line in data:
+            if line[0] != '#':
+                for t in line.split():
+                    yield t
+            self.currPos += len(line)
 
 
 class NetPbmWriter:
