@@ -1,1 +1,3 @@
 Należy zainstalować pyqt5, opencv-python, qimage2nparray i matplotlib przez pip'a i w wierszu poleceń: python image_edit.py
+
+Program oparty o napisany przez ze mnie kod na przedmiot "Podstawy biometrii" który realizowałem w poprzednim semestrze. Dodałem do niego wsparcie do PPM (plik NetPbm.py) i możliwość kontroli jakości zapisywanego obrazu JPEG.

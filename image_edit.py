@@ -78,7 +78,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
                     msg.setText("Couldn't load PPM file!")
-                    msg.setDetailedText("Reason: " + str(ret))
+                    msg.setDetailedText("Reason: " + NetPbm.readerResultToString(ret))
                     msg.setWindowTitle("Error!")
                     msg.exec_()
                     return
@@ -113,7 +113,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
                         msg.setText("Couldn't save PPM file!")
-                        msg.setDetailedText("Reason: " + ret)
+                        msg.setDetailedText("Reason: " + NetPbm.writerResultToString(ret))
                         msg.setWindowTitle("Error!")
                         msg.exec_()
                 elif selFilter == "PPM ASCII File (*.ppm)":
@@ -123,7 +123,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
                         msg.setText("Couldn't save PPM file!")
-                        msg.setDetailedText("Reason: " + ret)
+                        msg.setDetailedText("Reason: " + NetPbm.writerResultToString(ret))
                         msg.setWindowTitle("Error!")
                         msg.exec_()
                 elif selFilter == "JPEG file (*.jpg)":

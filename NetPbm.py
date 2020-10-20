@@ -35,6 +35,28 @@ def netPbmFileTypeEnumToMagic(input: NetPbmFileType):
     return "P" + str(input.value)
 
 
+def readerResultToString(result: NetPbmReaderResult) -> str:
+    if result == NetPbmReaderResult.OK:
+        return "All OK"
+    if result == NetPbmReaderResult.UnsupportedFormatVersion:
+        return "Following version of the format is not supported"
+    if result == NetPbmReaderResult.CorruptedFile:
+        return "File is corrupted"
+    if result == NetPbmReaderResult.FileDoesNotExists:
+        return "File doesn't exists"
+    if result == NetPbmReaderResult.UnknownError:
+        return "Unknown Reader Error"
+    return "Undefined Error"
+
+
+def writerResultToString(result: NetPbmWriterResult) -> str:
+    if result == NetPbmWriterResult.OK:
+        return "All OK"
+    if result == NetPbmReaderResult.NetPbmWriterResult:
+        return "Following version of the format is not supported"
+    return "Undefined Error"
+
+
 class NetPbmReader:
     image = None
 
@@ -81,7 +103,7 @@ class NetPbmReader:
             print(e)
             return NetPbmReaderResult.UnknownError
 
-        if len(readArr) != width*height*3:
+        if len(readArr) != width * height * 3:
             return NetPbmReaderResult.CorruptedFile
 
         arr = readArr.reshape(height, width, 3)
@@ -91,7 +113,7 @@ class NetPbmReader:
                 r, g, b = arr[h][w]
                 if normailize:
                     copy[h][w] = np.array([self.normalize(r, maxColorValue), self.normalize(g, maxColorValue),
-                                          self.normalize(b, maxColorValue)])
+                                           self.normalize(b, maxColorValue)])
 
         self.image = qimage2ndarray.array2qimage(copy, False)
 
@@ -120,7 +142,7 @@ class NetPbmReader:
                         b = self.normalize(b, maxColorValue)
                     arr[h][w] = np.array([r, g, b])
         except RuntimeError as e:
-            if e.__cause__ == "StopIteration": # We can't get next set, file corrupted.
+            if e.__cause__ == "StopIteration":  # We can't get next set, file corrupted.
                 return NetPbmReaderResult.CorruptedFile
             else:
                 return NetPbmReaderResult.UnknownError
@@ -140,7 +162,12 @@ class NetPbmReader:
         for line in data:
             if line[0] != '#':
                 for t in line.split():
-                    yield t
+                    if '#' in t:
+                        # comment in middle, skip the rest of the line
+                        break
+                    else:
+                        yield t
+
             self.currPos += len(line)
 
 
