@@ -108,12 +108,12 @@ class NetPbmReader:
 
         arr = readArr.reshape(height, width, 3)
         copy = arr.copy()
-        for h in range(height):
-            for w in range(0, width):
-                r, g, b = arr[h][w]
-                if normailize:
+        if normailize:
+            for h in range(height):
+                for w in range(0, width):
+                    r, g, b = arr[h][w]
                     copy[h][w] = np.array([self.normalize(r, maxColorValue), self.normalize(g, maxColorValue),
-                                           self.normalize(b, maxColorValue)])
+                                            self.normalize(b, maxColorValue)])
 
         self.image = qimage2ndarray.array2qimage(copy, False)
 

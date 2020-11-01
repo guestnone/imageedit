@@ -284,6 +284,45 @@
      <string>Median Filter</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="imageOpsPushButton">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>340</y>
+      <width>121</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Image Operations</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="grayScalePushButton">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>370</y>
+      <width>121</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GrayScale</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="customConvKernelPushButton">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>400</y>
+      <width>121</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Custom Conv Kernel</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

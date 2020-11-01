@@ -4,12 +4,15 @@ from Binarization import *
 from BrightenDarken import *
 from ColorSelectDialogImpl import *
 from Filtering import *
+from GrayScale import GrayScale
+from ImageOps import ImageOps
 from JpegCompressionQualityDialogImpl import JpegCompressionQualityDialog
 
 from MainWindow import Ui_MainWindow
 
 import NetPbm
-    
+from ThreeDeeCube import ThreeDeeCubeWindow
+
 
 class UserGui(QMainWindow, Ui_MainWindow):
 ###
@@ -46,6 +49,9 @@ class UserGui(QMainWindow, Ui_MainWindow):
         self.convolutePushButton.clicked.connect(self.convolute)
         self.kuwaharaPushButton.clicked.connect(self.kuwahara)
         self.medianFilterPushButton.clicked.connect(self.median)
+        self.imageOpsPushButton.clicked.connect(self.imageOps)
+        self.grayScalePushButton.clicked.connect(self.grayScale)
+        self.customConvKernelPushButton.clicked.connect(self.customConvolute)
         
         self.scene.mouseMoveEvent = self.graphicsSceneMouseMoveEvent
         self.scene.mousePressEvent = self.graphicsSceneMousePressEvent
@@ -141,7 +147,12 @@ class UserGui(QMainWindow, Ui_MainWindow):
             dialog = DefaultHistogramDialog(self.image)
             dialog.setModal(True)
             dialog.exec_()
-            
+
+
+    @pyqtSlot()
+    def threeDeeCube(self):
+        self.thirdDialog = ThreeDeeCubeWindow()
+
     @pyqtSlot()
     def equalize(self):
         if self.isLoaded:
@@ -225,6 +236,19 @@ class UserGui(QMainWindow, Ui_MainWindow):
                 self.scene.update()
                 self.graphicsView.update()
                 QApplication.processEvents()
+
+
+    @pyqtSlot()
+    def customConvolute(self):
+        if self.isLoaded:
+            dialog = CustomConvoluteFiltering(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
                 
     @pyqtSlot()
     def kuwahara(self):
@@ -242,6 +266,32 @@ class UserGui(QMainWindow, Ui_MainWindow):
     def median(self):
         if self.isLoaded:
             dialog = MedianFiltering(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+
+
+    @pyqtSlot()
+    def imageOps(self):
+        if self.isLoaded:
+            dialog = ImageOps(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+
+
+    @pyqtSlot()
+    def grayScale(self):
+        if self.isLoaded:
+            dialog = GrayScale(self.image)
             if dialog.isChanged():
                 self.image = dialog.getAfterQImage()
                 self.pixmap = QPixmap.fromImage(self.image)
