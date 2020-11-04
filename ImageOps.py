@@ -115,10 +115,10 @@ class ImageOps:
             self.newG = np.where(value > 0, np.fmod((g / value), 256).astype(int), g)
             self.newR = np.where(value > 0, np.fmod((r / value), 256).astype(int), r)
         elif type == ImageOpsType.Darken:
-            # Use of the exponential gives us very large values, so we do a modulo to get value in our range
-            self.newB = np.fmod(value * np.exp2(b.astype(int)), 256)
-            self.newG = np.fmod(value * np.exp2(g.astype(int)), 256)
-            self.newR = np.fmod(value * np.exp2(r.astype(int)), 256)
+            # Use of the exponential causes overflow, so this does not work well
+            self.newB = (255/(value * np.exp2(b.astype(int)))).astype(int)
+            self.newG = (255/(value * np.exp2(g.astype(int)))).astype(int)
+            self.newR = (255/(value * np.exp2(r.astype(int)))).astype(int)
 
             self.newB[self.newB > 255] = 255
             self.newB[self.newB < 0] = 0
