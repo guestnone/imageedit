@@ -52,6 +52,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
         self.imageOpsPushButton.clicked.connect(self.imageOps)
         self.grayScalePushButton.clicked.connect(self.grayScale)
         self.customConvKernelPushButton.clicked.connect(self.customConvolute)
+        self.bpbPushButton.clicked.connect(self.blackBinarize)
         
         self.scene.mouseMoveEvent = self.graphicsSceneMouseMoveEvent
         self.scene.mousePressEvent = self.graphicsSceneMousePressEvent
@@ -299,8 +300,20 @@ class UserGui(QMainWindow, Ui_MainWindow):
                 self.scene.update()
                 self.graphicsView.update()
                 QApplication.processEvents()
-    
-    
+
+
+    @pyqtSlot()
+    def blackBinarize(self):
+        if self.isLoaded:
+            dialog = BlackPercentBinarization(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Equal or event.key() == Qt.Key_E:
             self.graphicsView.scale(1.2, 1.2)

@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import qimage2ndarray
 
+from BlackBinarizationDialog import Ui_BlackBinarizationValueDialog
 from HistogramUtility import *
 
 from BinarizationValueSelectDialog import Ui_BinarizationValueSelectDialog
@@ -89,6 +90,74 @@ class HandPickedBinarization():
         finalImage[grayImage > threshold] = 255
         finalImage[grayImage < threshold] = 0
         
+        ## Convert the Gray image to color for histogram and main window
+        self.afterImage = cv2.cvtColor(finalImage, cv2.COLOR_GRAY2BGR)
+
+
+class BlackBinarizationPercentValueSelectDialog(QDialog):
+    def __init__(self):
+        QWidget.__init__(self)
+        self.isChange = False
+        self.ui = Ui_BlackBinarizationValueDialog()
+        self.ui.setupUi(self)
+        self.ui.buttonBox.accepted.connect(self.handleOK)
+        self.ui.buttonBox.rejected.connect(self.handleCancel)
+
+    def getIfChanged(self):
+        return self.isChange
+
+    @pyqtSlot()
+    def handleOK(self):
+        self.isChange = True
+
+    @pyqtSlot()
+    def handleCancel(self):
+        self.isChange = False
+
+    def getPercent(self):
+        return self.ui.horizontalSlider.value()
+
+
+class BlackPercentBinarization:
+    def __init__(self, image):
+        self.dialog = BlackBinarizationPercentValueSelectDialog()
+        self.dialog.setModal(True)
+        self.dialog.exec_()
+        if self.dialog.getIfChanged():
+            self.process(image, self.dialog.getPercent())
+            showInput = cv2.cvtColor(cv2.cvtColor(qimage2ndarray.rgb_view(image, 'little'), cv2.COLOR_BGR2GRAY),
+                                     cv2.COLOR_GRAY2BGR)
+            self.dialog = BeforeAfterHistogramDialog(qimage2ndarray.array2qimage(showInput), self.afterImage)
+            self.dialog.setModal(True)
+            self.dialog.exec_()
+
+    def getAfterQImage(self):
+        return qimage2ndarray.array2qimage(self.afterImage)
+
+    def isChanged(self):
+        return self.dialog.isChange
+
+    def process(self, image, percent):
+        ## Convert RGB QImage to BGR OpenCV/numpy Image and that to gray scale.
+        input = qimage2ndarray.rgb_view(image, 'little')
+        grayImage = cv2.cvtColor(input, cv2.COLOR_BGR2GRAY)
+        all = np.bincount(grayImage.flatten(), minlength=256)
+        lut = np.zeros((256))
+        limes = ((percent / 100) * all.sum()).astype(int)
+        nextsum = 0
+        for i in range(len(lut)):
+            nextsum += all[i]
+            if nextsum < limes:
+                lut[i] = 0
+            else:
+                lut[i] = 255
+
+
+        ## perform binarization
+        finalImage = grayImage.copy()
+        for i in range(len(lut)):
+            finalImage[grayImage == i] = lut[i]
+
         ## Convert the Gray image to color for histogram and main window
         self.afterImage = cv2.cvtColor(finalImage, cv2.COLOR_GRAY2BGR)
 

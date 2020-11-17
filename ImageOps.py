@@ -128,9 +128,9 @@ class ImageOps:
             self.newR[self.newR < 0] = 0
 
         elif type == ImageOpsType.Brighten:
-            self.newB = (value * np.log10(b + 1)).astype(int)
-            self.newG = (value * np.log10(g + 1)).astype(int)
-            self.newR = (value * np.log10(r + 1)).astype(int)
+            self.newB = (value * np.log2(b + 1)).astype(int)
+            self.newG = (value * np.log2(g + 1)).astype(int)
+            self.newR = (value * np.log2(r + 1)).astype(int)
 
             self.newB[self.newB > 255] = 255
             self.newB[self.newB < 0] = 0

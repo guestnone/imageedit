@@ -323,6 +323,19 @@
      <string>Custom Conv Kernel</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="bpbPushButton">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>430</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Black percent Binarization</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

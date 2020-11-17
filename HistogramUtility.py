@@ -81,9 +81,11 @@ class DefaultHistogramDialog(QDialog):
         
         self.ui.widget.canvas.sumbu1.clear()
         read_img = qimage2ndarray.rgb_view(fileName, 'little')
+        b, g, r = cv2.split(read_img)
+        split = np.array([b.flatten(), g.flatten(), r.flatten()])
         color = ('b','g','r')
         for i,col in enumerate(color):
-            histr = cv2.calcHist([read_img],[i],None,[256],[0,256])
+            histr = np.bincount(split[i], minlength=256).reshape(256, 1)
             self.ui.widget.canvas.sumbu1.plot(histr,color = col,linewidth=3.0)
             self.ui.widget.canvas.sumbu1.set_ylabel('Number Of values', color='blue')
             self.ui.widget.canvas.sumbu1.set_xlabel('Pixel Value', color='blue')
@@ -100,6 +102,7 @@ class DefaultHistogramDialog(QDialog):
 ### HISTOGRAM PROCESSING ###
 ############################
 
+## aka wyrównywanie obrazu
 class HistogramEqualizer():
     def __init__(self, image):
         self.process(image)
@@ -117,10 +120,10 @@ class HistogramEqualizer():
         input = qimage2ndarray.rgb_view(image, 'little')
         
         b,g,r = cv2.split(input)
-        histB, binB = np.histogram(b.flatten(), 256, [0, 256])
-        histG, binG = np.histogram(g.flatten(), 256, [0, 256])
-        histR, binR = np.histogram(r.flatten(), 256, [0, 256])
-         
+        histB = np.bincount(b.flatten(), minlength=256)
+        histG = np.bincount(g.flatten(), minlength=256)
+        histR = np.bincount(r.flatten(), minlength=256)
+
         cdfB = np.cumsum(histB)  
         cdfG = np.cumsum(histG)
         cdfR = np.cumsum(histR)
@@ -143,7 +146,8 @@ class HistogramEqualizer():
         img_out = cv2.merge((imgB, imgG, imgR))
         
         self.afterImage = cv2.cvtColor(img_out, cv2.COLOR_BGR2RGB)
-        
+
+# aka rozciąganie obrazu
 class HistogramNormalize():
     def __init__(self, image):
         self.process(image)
@@ -156,24 +160,42 @@ class HistogramNormalize():
         
     def isChanged(self):
         return self.dialog.isChange
-    
+
+    def getMinMax(self, channel):
+        hist = np.bincount(channel.flatten(), minlength=256)
+        valid = np.where(hist != 0)[0]
+        min = valid[hist[valid].argmin()]
+        max = hist.argmax()
+        if min > max:
+            return max, min
+        return min, max
+
     def process(self, image):
         input = qimage2ndarray.rgb_view(image, 'little')
         
         b,g,r = cv2.split(input)
-        histB, binB = np.histogram(b.flatten(), 256, [0, 256])
-        histG, binG = np.histogram(g.flatten(), 256, [0, 256])
-        histR, binR = np.histogram(r.flatten(), 256, [0, 256])
-         
-        cdfB = np.cumsum(histB).astype('uint8')
-        cdfG = np.cumsum(histG).astype('uint8')
-        cdfR = np.cumsum(histR).astype('uint8')
+        minB, maxB = self.getMinMax(b)
+        minG, maxG = self.getMinMax(g)
+        minR, maxR = self.getMinMax(r)
+        minO = 0
+        maxO = 255
 
-        imgB = cdfB[b]
-        imgG = cdfG[g]
-        imgR = cdfR[r]
+        tmpB = (((b - minB) / (maxB - minB)) * 256)
+        tmpG = (((g - minG) / (maxG - minG)) * 256)
+        tmpR = (((r - minR) / (maxR - minR)) * 256)
+        #tmpB = (b-minB)*(((maxO-minO)/(maxB-minB))+minO)
+        #tmpG = (g - minG) * (((maxO - minO) / (maxG - minG)) + minO)
+        #tmpR = (g - minR) * (((maxO - minO) / (maxR - minR)) + minO)
+        imgB = np.where(tmpB >= 255, 255, tmpB)
+        imgG = np.where(tmpG >= 255, 255, tmpG)
+        imgR = np.where(tmpG >= 255, 255, tmpR)
+
+
+        #imgB = (((b - minB) / (maxB - minB))).astype('uint8')
+        #imgG = (((g - minG) / (maxG - minG))).astype('uint8')
+        #imgR = (((r - minR) / (maxR - minR))).astype('uint8')
   
-        img_out = cv2.merge((imgB, imgG, imgR))
+        img_out = cv2.merge((imgB.astype("uint8"), imgG.astype("uint8"), imgR.astype("uint8")))
         
         self.afterImage = cv2.cvtColor(img_out, cv2.COLOR_BGR2RGB)
 
