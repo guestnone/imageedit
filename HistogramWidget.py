@@ -1,4 +1,4 @@
-from matplotlib.backends.backend_qt5agg import FigureCanvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QBasicTimer, pyqtSignal, pyqtSlot, QAbstractTableModel, QModelIndex, QVariant
@@ -8,7 +8,7 @@ from PyQt5.QtGui import *
 class HistogramWidget(QWidget):    
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)        
-        self.canvas = FigureCanvas(Figure())
+        self.canvas = FigureCanvasQTAgg(Figure())
        
         vertical_layout = QVBoxLayout()
         vertical_layout.addWidget(self.canvas)

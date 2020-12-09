@@ -1,3 +1,5 @@
+from enum import Enum
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QBasicTimer, pyqtSignal, pyqtSlot, QAbstractTableModel, QModelIndex, QVariant
 from PyQt5.QtGui import *
@@ -219,6 +221,39 @@ class NiblackBinarization():
         
         # Convert the Gray image to color for histogram and main window
         self.afterImage = cv2.cvtColor(finalImage, cv2.COLOR_GRAY2BGR)
+
+def OtsuBinarize(grayImage):
+    pixelNum = grayImage.shape[0] * grayImage.shape[1]
+    meanWeight = 1.0 / pixelNum
+    his, bins = np.histogram(grayImage, np.arange(0, 257))
+
+    finalThreshold = -1
+    finalColorValue = -1
+    intensities = np.arange(256)
+
+    ## compute final threshold
+    for t in bins[1:-1]:
+        pcb = np.sum(his[:t])
+        pcf = np.sum(his[t:])
+        Wb = pcb * meanWeight
+        Wf = pcf * meanWeight
+
+        mub = np.sum(intensities[:t] * his[:t]) / float(pcb)
+        muf = np.sum(intensities[t:] * his[t:]) / float(pcf)
+
+        ## calculate final minimization value
+        value = Wb * Wf * (mub - muf) ** 2
+
+        if value > finalColorValue:
+            finalThreshold = t
+            finalColorValue = value
+
+    ## perform binarization
+    finalImage = grayImage.copy()
+    print(finalThreshold)
+    finalImage[grayImage > finalThreshold] = 255
+    finalImage[grayImage < finalThreshold] = 0
+    return finalImage
 
 class OtsuBinarization():
     def __init__(self, image):

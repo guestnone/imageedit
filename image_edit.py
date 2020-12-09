@@ -11,6 +11,7 @@ from JpegCompressionQualityDialogImpl import JpegCompressionQualityDialog
 from MainWindow import Ui_MainWindow
 
 import NetPbm
+from MorphOp import MorphologicalOperations
 from ThreeDeeCube import ThreeDeeCubeWindow
 
 
@@ -53,6 +54,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
         self.grayScalePushButton.clicked.connect(self.grayScale)
         self.customConvKernelPushButton.clicked.connect(self.customConvolute)
         self.bpbPushButton.clicked.connect(self.blackBinarize)
+        self.morphOpsPushButton.clicked.connect(self.morphOps)
         
         self.scene.mouseMoveEvent = self.graphicsSceneMouseMoveEvent
         self.scene.mousePressEvent = self.graphicsSceneMousePressEvent
@@ -306,6 +308,19 @@ class UserGui(QMainWindow, Ui_MainWindow):
     def blackBinarize(self):
         if self.isLoaded:
             dialog = BlackPercentBinarization(self.image)
+            if dialog.isChanged():
+                self.image = dialog.getAfterQImage()
+                self.pixmap = QPixmap.fromImage(self.image)
+                self.internalPixmap.setPixmap(self.pixmap)
+                self.scene.update()
+                self.graphicsView.update()
+                QApplication.processEvents()
+
+
+    @pyqtSlot()
+    def morphOps(self):
+        if self.isLoaded:
+            dialog = MorphologicalOperations(self.image)
             if dialog.isChanged():
                 self.image = dialog.getAfterQImage()
                 self.pixmap = QPixmap.fromImage(self.image)

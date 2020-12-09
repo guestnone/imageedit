@@ -1,5 +1,5 @@
 Należy zainstalować pyqt5, opencv-python, qimage2nparray i matplotlib przez pip'a i w wierszu poleceń: python image_edit.py
 
-Program oparty o napisany przez ze mnie kod na przedmiot "Podstawy biometrii", z modyfikacjami w celu dodania operacji na obrazie, własnego gray-scalingu i wprowadzania arbitralnego jądra konwolucyjnego.
+Program oparty o napisany przez ze mnie kod na przedmiot "Podstawy biometrii", z modyfikacjami (dodano operacje morfologiczne)
 
 Zródła dostępne także na GitHub: https://github.com/guestnone/imageedit
