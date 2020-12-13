@@ -154,200 +154,148 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="histogramPushButton">
-    <property name="geometry">
-     <rect>
-      <x>666</x>
-      <y>12</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Histogram</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="equalizerPushButton">
-    <property name="geometry">
-     <rect>
-      <x>666</x>
-      <y>40</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Equalizer</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="brightenPushButton">
-    <property name="geometry">
-     <rect>
-      <x>666</x>
-      <y>100</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Brightness</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="normalizePushButton">
-    <property name="geometry">
-     <rect>
-      <x>666</x>
-      <y>70</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Normalize</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="otsuBinarizePushButton">
-    <property name="geometry">
-     <rect>
-      <x>666</x>
-      <y>130</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Otsu Binarization</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="niblackBinarizepushButton">
-    <property name="geometry">
-     <rect>
-      <x>667</x>
-      <y>160</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Niblack Binarization</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="thresholdBinarizepushButton">
-    <property name="geometry">
-     <rect>
-      <x>667</x>
-      <y>190</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Threshold Binarization</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="convolutePushButton">
-    <property name="geometry">
-     <rect>
-      <x>667</x>
-      <y>220</y>
-      <width>120</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Convolution Filter</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="kuwaharaPushButton">
-    <property name="geometry">
-     <rect>
-      <x>665</x>
-      <y>250</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Kuwahara Filter</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="medianFilterPushButton">
-    <property name="geometry">
-     <rect>
-      <x>663</x>
-      <y>280</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Median Filter</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="imageOpsPushButton">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>340</y>
-      <width>121</width>
-      <height>23</height>
+      <y>320</y>
+      <width>132</width>
+      <height>199</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Image Operations</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="imageOpsPushButton">
+       <property name="text">
+        <string>Image Operations</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="grayScalePushButton">
+       <property name="text">
+        <string>GrayScale</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="customConvKernelPushButton">
+       <property name="text">
+        <string>Custom Conv Kernel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="bpbPushButton">
+       <property name="text">
+        <string>Black percent Binarization</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="morphOpsPushButton">
+       <property name="text">
+        <string>Morphological Ops</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="grassPushButton">
+       <property name="text">
+        <string>Grass Analyzer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="grassParamsPushButton">
+       <property name="text">
+        <string>Grass Parameters</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QPushButton" name="grayScalePushButton">
+   <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>370</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>GrayScale</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="customConvKernelPushButton">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>400</y>
-      <width>121</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Custom Conv Kernel</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="bpbPushButton">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>430</y>
+      <y>30</y>
       <width>131</width>
-      <height>31</height>
+      <height>286</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Black percent Binarization</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="morphOpsPushButton">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>470</y>
-      <width>131</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Morphological Ops</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QPushButton" name="histogramPushButton">
+       <property name="text">
+        <string>Histogram</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="equalizerPushButton">
+       <property name="text">
+        <string>Equalizer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="normalizePushButton">
+       <property name="text">
+        <string>Normalize</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="brightenPushButton">
+       <property name="text">
+        <string>Brightness</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="otsuBinarizePushButton">
+       <property name="text">
+        <string>Otsu Binarization</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="niblackBinarizepushButton">
+       <property name="text">
+        <string>Niblack Binarization</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="thresholdBinarizepushButton">
+       <property name="text">
+        <string>Threshold Binarization</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="convolutePushButton">
+       <property name="text">
+        <string>Convolution Filter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="kuwaharaPushButton">
+       <property name="text">
+        <string>Kuwahara Filter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="medianFilterPushButton">
+       <property name="text">
+        <string>Median Filter</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
