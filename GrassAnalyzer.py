@@ -2,6 +2,7 @@ import json
 from typing import List, NamedTuple
 
 import cv2
+import jsonpickle
 import numpy as np
 import qimage2ndarray
 from PyQt5.QtCore import pyqtSlot
@@ -16,6 +17,7 @@ class Color(NamedTuple):
     Hue: int
     Saturation: int
     Value: int
+
 
 class ColorLimits(NamedTuple):
     Begin: Color
@@ -65,20 +67,28 @@ def saveDefaults(path="./grassVars.json"):
     json.dump(getDefaultSettings(), fp=fileToSave, indent=4)
     fileToSave.close()
 
+def saveToFile(cdv, path="./grassVars.json"):
+    fileToSave = open(path, 'w')
+    fileToSave.write(jsonpickle.encode(cdv, indent=4))
+    fileToSave.close()
 
-def Analyze(image: QImage, vars: ColorDetectVariable) -> (Results, bool):
-    results = Results
-    results.InputImage = qimage2ndarray.rgb_view(image, 'little')
-    tmpHsv = cv2.cvtColor(results.InputImage, cv2.COLOR_BGR2HSV)
+def GetSeamsImage(image: np.ndarray, limits: List[ColorLimits]) -> np.ndarray:
+    tmpHsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     mask = None
-    for (limit) in vars.Limits:
+    for (limit) in limits:
         if mask is None:
             mask = cv2.inRange(tmpHsv, limit.Begin, limit.End)
         else:
             mask = mask + cv2.inRange(tmpHsv, limit.Begin, limit.End)
 
-    results.PostSeamsImage = cv2.bitwise_and(results.InputImage, results.InputImage, mask=mask)
+    return cv2.bitwise_and(image, image, mask=mask)
+
+
+def Analyze(image: QImage, vars: ColorDetectVariable) -> (Results, bool):
+    results = Results
+    results.InputImage = qimage2ndarray.rgb_view(image, 'little')
+    results.PostSeamsImage = GetSeamsImage(results.InputImage, vars.Limits)
 
     return results, True
 
@@ -129,7 +139,7 @@ class PostAnalyzeGui(QDialog):
         self.ui.setupUi(self)
         self.ui.buttonBox.button(QDialogButtonBox.Save).clicked.connect(self.doSave)
 
-        #Input Image
+        # Input Image
         inputScene = QGraphicsScene()
         inputPixmap = QPixmap.fromImage(qimage2ndarray.array2qimage(results.InputImage))
         inputScene.addPixmap(inputPixmap)

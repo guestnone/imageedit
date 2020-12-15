@@ -5,6 +5,7 @@ from BrightenDarken import *
 from ColorSelectDialogImpl import *
 from Filtering import *
 from GrassAnalyzer import GrassAnalyzerMain
+from GrassParameterCreator import GrassParameterCreatorMain
 from GrayScale import GrayScale
 from ImageOps import ImageOps
 from JpegCompressionQualityDialogImpl import JpegCompressionQualityDialog
@@ -57,6 +58,7 @@ class UserGui(QMainWindow, Ui_MainWindow):
         self.bpbPushButton.clicked.connect(self.blackBinarize)
         self.morphOpsPushButton.clicked.connect(self.morphOps)
         self.grassPushButton.clicked.connect(self.grass)
+        self.grassParamsPushButton.clicked.connect(self.grassParams)
         
         self.scene.mouseMoveEvent = self.graphicsSceneMouseMoveEvent
         self.scene.mousePressEvent = self.graphicsSceneMousePressEvent
@@ -336,6 +338,12 @@ class UserGui(QMainWindow, Ui_MainWindow):
     def grass(self):
         if self.isLoaded:
             dialog = GrassAnalyzerMain(self.image)
+
+
+    @pyqtSlot()
+    def grassParams(self):
+        if self.isLoaded:
+            dialog = GrassParameterCreatorMain(self.image)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Equal or event.key() == Qt.Key_E:
